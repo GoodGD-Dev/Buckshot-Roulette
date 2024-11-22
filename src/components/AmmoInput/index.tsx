@@ -14,6 +14,7 @@ const AmmoInput: React.FC = () => {
 
   // Estado para controlar quando o botão foi clicado
   const [started, setStarted] = useState(false)
+  const [forceUpdate, setForceUpdate] = useState(0) // Estado para forçar atualização
 
   // Função para lidar com a mudança dos inputs
   const handleInputChange = (
@@ -26,7 +27,11 @@ const AmmoInput: React.FC = () => {
 
   // Função chamada ao clicar no botão "Start"
   const handleButtonClick = () => {
-    setStarted(true) // Marca que o botão foi clicado
+    if (!started) {
+      setStarted(true) // Ativa a lógica pela primeira vez
+    } else {
+      setForceUpdate((prev) => prev + 1) // Força a atualização dos cálculos e dos itens
+    }
   }
 
   return (
@@ -63,7 +68,7 @@ const AmmoInput: React.FC = () => {
         <S.BtnStart onClick={handleButtonClick}>Start</S.BtnStart>
       </S.FormContainer>
 
-      <ItemList inputs={inputs} started={started} />
+      <ItemList inputs={inputs} started={started} forceUpdate={forceUpdate} />
     </>
   )
 }

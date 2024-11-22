@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { InputType } from '../../utils/enums/ammosType'
 import * as S from './style'
 import variaveis from '../../styles/variaveis'
@@ -6,22 +6,39 @@ import variaveis from '../../styles/variaveis'
 type ItemListProps = {
   inputs: { [key in InputType]: number }
   started: boolean
+  forceUpdate: number // Novo estado para forçar atualização
 }
 
-const ItemList: React.FC<ItemListProps> = ({ inputs, started }) => {
+const ItemList: React.FC<ItemListProps> = ({
+  inputs,
+  started,
+  forceUpdate
+}) => {
   const [checkedValues, setCheckedValues] = useState<{ [key: string]: string }>(
     {}
   )
+  const [calculatedSum, setCalculatedSum] = useState(0) // Estado para armazenar a soma dos itens
+
+  // Atualiza a soma apenas quando "Start" é clicado ou `forceUpdate` muda
+  useEffect(() => {
+    if (started) {
+      const sum = Math.min(
+        inputs[InputType.FECHIM] + inputs[InputType.TRUE],
+        14
+      ) // Limita a soma a 14
+      setCalculatedSum(sum)
+    }
+  }, [started, forceUpdate]) // Remove inputs como dependência
 
   if (!started) {
     return null // Não renderiza nada até o botão "Start" ser clicado
   }
 
-  // Calculando a soma dos valores dos inputs
-  const sum = Math.min(inputs[InputType.FECHIM] + inputs[InputType.TRUE], 14) // Limita a soma a 14
-
-  // Gerando os itens com base na soma
-  const items = Array.from({ length: sum }, (_, index) => `Bala ${index + 1}`)
+  // Gerando os itens com base na soma calculada
+  const items = Array.from(
+    { length: calculatedSum },
+    (_, index) => `Bala ${index + 1}`
+  )
 
   // Função para manipular a seleção dos checkboxes
   const handleCheckboxChange = (item: string, value: string) => {
