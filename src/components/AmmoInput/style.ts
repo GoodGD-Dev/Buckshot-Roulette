@@ -1,23 +1,15 @@
 import styled from 'styled-components'
 import variaveis from '../../styles/variaveis'
-
-// Estilos compartilhados para input
-const inputStyle = `
-  width: 80px;
-  font-size: 32px;
-  padding: 10px 25px;
-  border-radius: 5px;
-  box-sizing: border-box;
-`
+import { InputType } from '../../utils/enums/ammosType'
 
 // Definindo uma interface para as propriedades customizadas
-interface InputProps {
+type InputProps = {
   borderColor?: string
   color?: string
 }
 
-interface LabelProps {
-  type: 'fechim' | 'true' // Definindo o tipo que pode ser 'fechim' ou 'true'
+type LabelProps = {
+  type: InputType.Fechim | InputType.True
 }
 
 // Componente genérico de label, recebe a cor via props
@@ -25,14 +17,29 @@ export const Label = styled.label<LabelProps>`
   width: 80px;
   text-align: center;
   color: ${({ type }) =>
-    type === 'fechim' ? variaveis.azul : variaveis.vermelho};
+    type === InputType.Fechim ? variaveis.fechim : variaveis.true};
 `
 
 // Componente genérico de input, recebe cor e borda via props
-export const Input = styled.input<InputProps>`
-  ${inputStyle}
-  border: solid 1px ${({ borderColor }) => borderColor || variaveis.azul};
-  color: ${({ color }) => color || variaveis.azul};
+export const Input = styled.input.attrs(() => ({
+  type: 'number'
+}))<InputProps>`
+  width: 80px;
+  font-size: 32px;
+  padding: 10px 25px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  border: solid 1px ${({ borderColor }) => borderColor || variaveis.fechim};
+  color: ${({ color }) => color || variaveis.fechim};
+  /* Remove os controles de incremento/decremento */
+  appearance: none;
+  -webkit-appearance: none; /* Para navegadores WebKit */
+  -moz-appearance: textfield; /* Para Firefox */
+
+  &:focus {
+    outline: none;
+    border-color: ${({ borderColor }) => borderColor || variaveis.fechim};
+  }
 `
 
 // Botão de start
@@ -44,7 +51,7 @@ export const BtnStart = styled.button`
   cursor: pointer;
   font-size: 18px;
   font &:hover {
-    background-color: ${variaveis.azul};
+    background-color: ${variaveis.fechim};
   }
   text-align: center;
   text-transform: uppercase;

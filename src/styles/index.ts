@@ -11,11 +11,18 @@ const EstiloGlobal = createGlobalStyle`
     background-color: ${variaveis.background};
     color: ${variaveis.verde};
   }
+
+
+
 `
 export const Container = styled.div`
   max-width: 1024px;
   width: 100%;
   margin: 0 auto;
+  border: dotted 1px ${variaveis.verde};
+  padding: 10px;
+  margin-top: 10px;
+  height: 90vh;
 `
 
 export default EstiloGlobal

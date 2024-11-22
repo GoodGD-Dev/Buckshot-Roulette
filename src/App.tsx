@@ -1,14 +1,14 @@
 import { Provider } from 'react-redux'
 import EstiloGlobal, { Container } from './styles'
 import store from './store'
-import Entrada from './components/TestInput'
+import AmmoInput from './components/AmmoInput'
 
 function App() {
   return (
     <Provider store={store}>
       <EstiloGlobal />
       <Container>
-        <Entrada />
+        <AmmoInput />
       </Container>
     </Provider>
   )
