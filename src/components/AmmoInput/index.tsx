@@ -1,22 +1,22 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
+import {
+  setInput,
+  resetCheckedValues,
+  selectInputs
+} from '../../store/reducers/ammoSlice'
 import * as S from './style'
 import variaveis from '../../styles/variaveis'
-
 import { InputType } from '../../utils/enums/ammosType'
-import { setInput } from '../../store/reducers/ammoSlice'
 import ItemList from '../ItemList'
 
 const AmmoInput: React.FC = () => {
   const dispatch = useDispatch()
-  const { inputs } = useSelector((state: any) => state.ammo)
+  const inputs = useSelector(selectInputs)
 
-  // Estado para controlar quando o botão foi clicado
   const [started, setStarted] = useState(false)
-  const [forceUpdate, setForceUpdate] = useState(0) // Estado para forçar atualização
+  const [items, setItems] = useState<{ name: string; chance: string }[]>([])
 
-  // Função para lidar com a mudança dos inputs
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     type: InputType
@@ -25,50 +25,51 @@ const AmmoInput: React.FC = () => {
     dispatch(setInput({ type, value }))
   }
 
-  // Função chamada ao clicar no botão "Start"
   const handleButtonClick = () => {
-    if (!started) {
-      setStarted(true) // Ativa a lógica pela primeira vez
-    } else {
-      setForceUpdate((prev) => prev + 1) // Força a atualização dos cálculos e dos itens
-    }
+    dispatch(resetCheckedValues()) // Reseta as checkboxes
+
+    const totalBalas = inputs[InputType.FECHIM] + inputs[InputType.TRUE]
+    const trueBalas = inputs[InputType.TRUE]
+
+    // Calculando a porcentagem de chance de ser uma bala verdadeira
+    const chanceDeSerTrue = totalBalas > 0 ? (trueBalas / totalBalas) * 100 : 0
+
+    // Gerando a lista de itens com a probabilidade calculada
+    const generatedItems = Array.from({ length: totalBalas }, (_, index) => ({
+      name: `Bala ${index + 1}`,
+      chance: chanceDeSerTrue.toFixed(2) // Armazenando a chance de ser true com 2 casas decimais
+    }))
+
+    setItems(generatedItems)
+    setStarted(true)
   }
 
   return (
     <>
       <S.FormContainer>
-        <S.FormGroup key={InputType.FECHIM}>
-          <S.Label htmlFor={InputType.FECHIM} type={InputType.FECHIM}>
-            {InputType.FECHIM}
-          </S.Label>
-          <S.Input
-            id={InputType.FECHIM}
-            borderColor={variaveis.fechim}
-            color={variaveis.fechim}
-            value={inputs[InputType.FECHIM]}
-            onChange={(e) => handleInputChange(e, InputType.FECHIM)}
-          />
-        </S.FormGroup>
-
-        <S.FormGroup key={InputType.TRUE}>
-          <S.Label htmlFor={InputType.TRUE} type={InputType.TRUE}>
-            {InputType.TRUE}
-          </S.Label>
-          <S.Input
-            id={InputType.TRUE}
-            borderColor={variaveis.true}
-            color={variaveis.true}
-            value={inputs[InputType.TRUE]}
-            onChange={(e) => handleInputChange(e, InputType.TRUE)}
-          />
-        </S.FormGroup>
+        {Object.values(InputType).map((type) => (
+          <S.FormGroup key={type}>
+            <S.Label htmlFor={type} type={type}>
+              {type}
+            </S.Label>
+            <S.Input
+              id={type}
+              borderColor={
+                variaveis[type.toLowerCase() as keyof typeof variaveis]
+              }
+              color={variaveis[type.toLowerCase() as keyof typeof variaveis]}
+              value={inputs[type]}
+              onChange={(e) => handleInputChange(e, type)}
+            />
+          </S.FormGroup>
+        ))}
       </S.FormContainer>
 
       <S.FormContainer>
         <S.BtnStart onClick={handleButtonClick}>Start</S.BtnStart>
       </S.FormContainer>
 
-      <ItemList inputs={inputs} started={started} forceUpdate={forceUpdate} />
+      <ItemList items={items} started={started} />
     </>
   )
 }

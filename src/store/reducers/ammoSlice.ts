@@ -3,7 +3,7 @@ import { InputType } from '../../utils/enums/ammosType'
 
 interface AmmoState {
   inputs: Record<InputType, number>
-  items: string[]
+  checkedValues: Record<string, string>
 }
 
 const initialState: AmmoState = {
@@ -11,7 +11,7 @@ const initialState: AmmoState = {
     [InputType.FECHIM]: 0,
     [InputType.TRUE]: 0
   },
-  items: []
+  checkedValues: {} // Estado para armazenar os valores das checkboxes
 }
 
 const ammoSlice = createSlice({
@@ -25,12 +25,24 @@ const ammoSlice = createSlice({
       const { type, value } = action.payload
       state.inputs[type] = value
     },
-    setItems: (state, action: PayloadAction<string[]>) => {
-      state.items = action.payload
+    setCheckedValue: (
+      state,
+      action: PayloadAction<{ item: string; value: string }>
+    ) => {
+      const { item, value } = action.payload
+      state.checkedValues[item] =
+        state.checkedValues[item] === value ? '' : value
+    },
+    resetCheckedValues: (state) => {
+      state.checkedValues = {} // Reseta todas as checkboxes
     }
   }
 })
 
-export const { setInput, setItems } = ammoSlice.actions
+export const { setInput, setCheckedValue, resetCheckedValues } =
+  ammoSlice.actions
+
+export const selectInputs = (state: any) => state.ammo.inputs
+export const selectCheckedValues = (state: any) => state.ammo.checkedValues
 
 export default ammoSlice.reducer
