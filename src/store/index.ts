@@ -1,7 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
+import ammoReducer from './reducers/ammoSlice'
 
 const store = configureStore({
-  reducer: {}
+  reducer: {
+    ammo: ammoReducer
+  }
 })
 
 export type RootState = ReturnType<typeof store.getState>

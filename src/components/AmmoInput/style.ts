@@ -9,7 +9,7 @@ type InputProps = {
 }
 
 type LabelProps = {
-  type: InputType.Fechim | InputType.True
+  type: InputType.FECHIM | InputType.TRUE
 }
 
 // Componente genérico de label, recebe a cor via props
@@ -17,28 +17,28 @@ export const Label = styled.label<LabelProps>`
   width: 80px;
   text-align: center;
   color: ${({ type }) =>
-    type === InputType.Fechim ? variaveis.fechim : variaveis.true};
+    type === InputType.FECHIM ? variaveis.fechim : variaveis.true};
 `
 
 // Componente genérico de input, recebe cor e borda via props
 export const Input = styled.input.attrs(() => ({
-  type: 'number'
+  type: 'number',
+  min: 0, // Valor mínimo permitido
+  max: 9,
+  step: 1
 }))<InputProps>`
-  width: 80px;
+  width: 100px;
   font-size: 32px;
-  padding: 10px 25px;
+  text-align: center;
+  padding: 10px 5px;
   border-radius: 5px;
   box-sizing: border-box;
-  border: solid 1px ${({ borderColor }) => borderColor || variaveis.fechim};
+  border: solid 1px ${({ borderColor }) => borderColor || variaveis.verde};
   color: ${({ color }) => color || variaveis.fechim};
-  /* Remove os controles de incremento/decremento */
-  appearance: none;
-  -webkit-appearance: none; /* Para navegadores WebKit */
-  -moz-appearance: textfield; /* Para Firefox */
 
   &:focus {
     outline: none;
-    border-color: ${({ borderColor }) => borderColor || variaveis.fechim};
+    border-color: ${({ borderColor }) => borderColor || variaveis.verde};
   }
 `
 
@@ -54,7 +54,6 @@ export const BtnStart = styled.button`
     background-color: ${variaveis.fechim};
   }
   text-align: center;
-  text-transform: uppercase;
 `
 
 //Container
@@ -64,7 +63,6 @@ export const FormContainer = styled.div`
   gap: 1vw;
   margin-top: 2vh;
   flex-wrap: wrap;
-  text-transform: uppercase;
 `
 
 //Inputs/Labels Group

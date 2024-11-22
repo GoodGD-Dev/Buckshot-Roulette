@@ -1,59 +1,60 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
 import * as S from './style'
 import variaveis from '../../styles/variaveis'
+
 import { InputType } from '../../utils/enums/ammosType'
+import { setInput } from '../../store/reducers/ammoSlice'
+import ItemList from '../ItemList'
 
-const AmmoInput = () => {
-  // Estados para armazenar os valores dos inputs
-  const [inputFechim, setInputFechim] = useState<number>(0)
-  const [inputTrue, setInputTrue] = useState<number>(0)
+const AmmoInput: React.FC = () => {
+  const dispatch = useDispatch()
+  const { inputs } = useSelector((state: any) => state.ammo)
 
-  // Estado para armazenar os itens gerados
-  const [items, setItems] = useState<string[]>([])
+  // Estado para controlar quando o botão foi clicado
+  const [started, setStarted] = useState(false)
 
-  // Função para atualizar o valor do input
+  // Função para lidar com a mudança dos inputs
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    setInput: React.Dispatch<React.SetStateAction<number>>
+    type: InputType
   ) => {
-    setInput(Number(e.target.value))
+    const value = Number(e.target.value)
+    dispatch(setInput({ type, value }))
   }
 
-  // Função chamada ao clicar no botão
+  // Função chamada ao clicar no botão "Start"
   const handleButtonClick = () => {
-    const sum = inputFechim + inputTrue // Soma dos dois valores
-    const newItems = Array.from(
-      { length: sum },
-      (_, index) => `Test ${index + 1}`
-    ) // Criação dos itens "Test 1", "Test 2", etc.
-    setItems(newItems) // Atualiza o estado com a nova lista
+    setStarted(true) // Marca que o botão foi clicado
   }
 
   return (
     <>
       <S.FormContainer>
-        <S.FormGroup>
-          <S.Label htmlFor={InputType.Fechim} type={InputType.Fechim}>
-            {InputType.Fechim}
+        <S.FormGroup key={InputType.FECHIM}>
+          <S.Label htmlFor={InputType.FECHIM} type={InputType.FECHIM}>
+            {InputType.FECHIM}
           </S.Label>
           <S.Input
-            id={InputType.Fechim}
+            id={InputType.FECHIM}
             borderColor={variaveis.fechim}
             color={variaveis.fechim}
-            value={inputFechim} // Valor do input
-            onChange={(e) => handleInputChange(e, setInputFechim)} // Atualiza o estado para Fechim
+            value={inputs[InputType.FECHIM]}
+            onChange={(e) => handleInputChange(e, InputType.FECHIM)}
           />
         </S.FormGroup>
-        <S.FormGroup>
-          <S.Label htmlFor={InputType.True} type={InputType.True}>
-            {InputType.True}
+
+        <S.FormGroup key={InputType.TRUE}>
+          <S.Label htmlFor={InputType.TRUE} type={InputType.TRUE}>
+            {InputType.TRUE}
           </S.Label>
           <S.Input
-            id={InputType.True}
+            id={InputType.TRUE}
             borderColor={variaveis.true}
             color={variaveis.true}
-            value={inputTrue} // Valor do input
-            onChange={(e) => handleInputChange(e, setInputTrue)} // Atualiza o estado para True
+            value={inputs[InputType.TRUE]}
+            onChange={(e) => handleInputChange(e, InputType.TRUE)}
           />
         </S.FormGroup>
       </S.FormContainer>
@@ -62,13 +63,7 @@ const AmmoInput = () => {
         <S.BtnStart onClick={handleButtonClick}>Start</S.BtnStart>
       </S.FormContainer>
 
-      {/* Renderizando a lista de itens gerados */}
-      <ul>
-        {items.length > 0 &&
-          items.map((item, index) => (
-            <li key={index}>{item}</li> // Mapeia os itens gerados
-          ))}
-      </ul>
+      <ItemList inputs={inputs} started={started} />
     </>
   )
 }

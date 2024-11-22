@@ -10,6 +10,8 @@ const EstiloGlobal = createGlobalStyle`
     list-style: none;
     background-color: ${variaveis.background};
     color: ${variaveis.verde};
+    text-transform: uppercase;
+    font-weight: bold;
   }
 
 

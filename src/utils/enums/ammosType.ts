@@ -1,4 +1,4 @@
 export enum InputType {
-  Fechim = 'Fechim',
-  True = 'True'
+  FECHIM = 'Fechim',
+  TRUE = 'True'
 }
